@@ -96,9 +96,9 @@ def apply_anisotropic_filter(signal, signal_noise, k, anisotropic_filter, force_
     ROW = len(signal)
     COL = len(signal[0])
     amount = 1.0 / k
-    WINDOW_SIZE = len(anisotropic_filter)
+    WINDOW_SIZE = 3
     delta = []
-    signal = []
+    signal_result = []
 
     if force_int:
         amount = int(amount)
@@ -109,30 +109,30 @@ def apply_anisotropic_filter(signal, signal_noise, k, anisotropic_filter, force_
         for j in range(COL):
             d.append(0)
             s.append(0)
-            delta.append(d)
-            signal.append(s)
+        delta.append(d)
+        signal_result.append(s)
 
     for i in range(ROW):
         for j in range(COL):
             if i == 0 or i == ROW - 1 or j == 0 or j == COL - 1:
-                signal[i][j] = signal_noise[i][j]
+                signal_result[i][j] = signal_noise[i][j]
             else:
                 sg = 0
                 for k1 in range(WINDOW_SIZE):
                     for k2 in range(WINDOW_SIZE):
                         sg += anisotropic_filter[k1][k2] * signal_noise[i - 1 + k1][j - 1 + k2]
-                signal[i][j] = sg / amount
+                signal_result[i][j] = sg / amount
 
     if force_int:
         for i in range(ROW):
             for j in range(COL):
-                signal[i][j] = int(signal[i][j])
+                signal_result[i][j] = int(signal_result[i][j])
                 signal_noise[i][j] = int(signal_noise[i][j])
                 delta[i][j] = int(delta[i][j])
 
     for i in range(ROW):
         for j in range(COL):
-            delta[i][j] = signal_noise[i][j] - signal[i][j]
+            delta[i][j] = signal_noise[i][j] - signal_result[i][j]
 
     # print("Anisotropic filter:")
     # print(format_matrix_to_string(signal_noise, "Signal-noise"))
@@ -140,7 +140,7 @@ def apply_anisotropic_filter(signal, signal_noise, k, anisotropic_filter, force_
     # print(format_matrix_to_string(delta, "Delta (Signal-noise - Signal)"))
     # print("\n=======================================================\n")
 
-    return signal, signal_noise, delta
+    return signal_result, signal_noise, delta
 
 
 def apply_statistic_filter(signal, signal_noise, window_size, m, force_int=True):
@@ -148,7 +148,7 @@ def apply_statistic_filter(signal, signal_noise, window_size, m, force_int=True)
     COL = len(signal[0])
     WINDOW_SIZE = window_size
     delta = []
-    signal = []
+    signal_result = []
     for i in range(ROW):
         d = []
         s = []
@@ -156,7 +156,7 @@ def apply_statistic_filter(signal, signal_noise, window_size, m, force_int=True)
             d.append(0)
             s.append(0)
         delta.append(d)
-        signal.append(s)
+        signal_result.append(s)
 
     for i in range(ROW):
         for j in range(COL):
@@ -177,22 +177,22 @@ def apply_statistic_filter(signal, signal_noise, window_size, m, force_int=True)
             D = sum2 / (pow(WINDOW_SIZE, 2) - 1)
             nu = m * sqrt(D)
             if (signal_noise[i][j] - G) < nu:
-                signal[i][j] = signal_noise[i][j]
+                signal_result[i][j] = signal_noise[i][j]
             else:
-                signal[i][j] = G
+                signal_result[i][j] = G
 
     for i in range(ROW):
         for j in range(COL):
-            delta[i][j] = signal_noise[i][j] - signal[i][j]
+            delta[i][j] = signal_noise[i][j] - signal_result[i][j]
             if force_int:
-                signal[i][j] = int(signal[i][j])
+                signal_result[i][j] = int(signal_result[i][j])
                 signal_noise[i][j] = int(signal_noise[i][j])
                 delta[i][j] = int(delta[i][j])
     # print("Statistic filter:")
     # print(format_matrix_to_string(signal_noise, "Signal-noise"))
     # print(format_matrix_to_string(signal, "Signal"))
     # print(format_matrix_to_string(delta, "Delta (Signal-noise - Signal)"))
-    return signal, signal_noise, delta
+    return signal_result, signal_noise, delta
 
 source_matrix = read_matrix('source_matrix.txt').tolist()
 noise_matrix = read_matrix('noise_matrix.txt').tolist()
