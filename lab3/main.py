@@ -5,14 +5,6 @@ from math import sqrt
 from matplotlib import cbook, cm
 from matplotlib.colors import LightSource
 
-# Статистический фильтр
-a = 1.26
-# Анизотропный фильтр (k x [filter])
-anisotropic_filter = [[1, 2, 1],
-                      [2, 4, 3],
-                      [1, 2, 2]]
-k = 1.0 / 18.0
-
 
 def read_matrix(path_to_file):
     with open(path_to_file, 'r') as file:
@@ -194,25 +186,36 @@ def apply_statistic_filter(signal, signal_noise, window_size, m, force_int=True)
     # print(format_matrix_to_string(delta, "Delta (Signal-noise - Signal)"))
     return signal_result, signal_noise, delta
 
-source_matrix = read_matrix('source_matrix.txt').tolist()
-noise_matrix = read_matrix('noise_matrix.txt').tolist()
+if __name__ == '__main__':
+    # Статистический фильтр
+    a = 1.26
+    # Анизотропный фильтр (k x [filter])
+    anisotropic_filter = [[1, 2, 1],
+                          [2, 4, 3],
+                          [1, 2, 2]]
+    k = 1.0 / 18.0
 
-print(source_matrix)
+    source_matrix = read_matrix('source_matrix.txt').tolist()
+    noise_matrix = read_matrix('noise_matrix.txt').tolist()
 
-(signal, signal_noise, delta) = apply_anisotropic_filter(source_matrix, noise_matrix, k, anisotropic_filter)
-print(signal)
-print(delta)
+    print(source_matrix)
 
-plot_matrix_3D(delta, "Анизотропная фильтрация 3д")
-plot_matrix(delta, "Анизотропная фильтрация")
-plot_matrix_3D(signal_noise, "Зашумленный сигнал 3д")
-plot_matrix(signal_noise, "Зашумленный сигнал")
-plot_matrix_3D(signal, "Анизотропная фильтрация сигнал 3д")
-plot_matrix(signal, "Анизотропная фильтрация сигнал")
+    (signal, signal_noise, delta) = apply_anisotropic_filter(source_matrix, noise_matrix, k, anisotropic_filter)
+    print(signal)
+    print(delta)
 
-(signal, signal_noise, delta) = apply_statistic_filter(source_matrix, noise_matrix, 3, a)
-plot_matrix_3D(delta, "Статистическая фильтрация разница 3D")
-plot_matrix(delta, "Статистическая фильтрация разница")
-plot_matrix_3D(signal, "Статистическая фильтрация сигнал 3д")
-plot_matrix(signal, "Статистическая фильтрация сигнал")
-plot.show()
+    plot_matrix_3D(delta, "Анизотропная фильтрация 3д")
+    plot_matrix(delta, "Анизотропная фильтрация")
+    plot_matrix_3D(signal_noise, "Зашумленный сигнал 3д")
+    plot_matrix(signal_noise, "Зашумленный сигнал")
+    plot_matrix_3D(signal, "Анизотропная фильтрация сигнал 3д")
+    plot_matrix(signal, "Анизотропная фильтрация сигнал")
+
+    (signal, signal_noise, delta) = apply_statistic_filter(source_matrix, noise_matrix, 3, a)
+    plot_matrix_3D(delta, "Статистическая фильтрация разница 3D")
+    plot_matrix(delta, "Статистическая фильтрация разница")
+    plot_matrix_3D(signal, "Статистическая фильтрация сигнал 3д")
+    plot_matrix(signal, "Статистическая фильтрация сигнал")
+    plot.show()
+
+    print('PyCharm')
