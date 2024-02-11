@@ -29,30 +29,6 @@ def print_data(signal, signal_noised, delta, title="title"):
     print_matrix(delta)
     print("---------------------------------------------")
 
-
-def format_matrix_to_string(M, name=None):
-    s = ""
-    if name is not None:
-        nameStr = str(name)  # ' ' +str(name)+' '
-        filler = ' \t'
-        while len(s) < len(M) * len(filler):
-            s += filler
-        half = int((len(s) - len(nameStr)) / 2)
-        s = s[:half] + nameStr + s[half + len(nameStr) - 1:]
-        s += '\n'
-    for i in range(len(M)):
-        V = M[i]
-        for j in range(len(V)):
-            s += str(V[j]) + '\t'
-            s = s[:-1] + '\n'
-    return s
-
-
-def get_matrix_surface(M):
-    X, Y = np.meshgrid(np.arange(len(M[0])), np.arange(len(M)))
-    return X, Y, np.array(M)
-
-
 def plot_matrix(matrix, name):
     plot.figure()
     plot.imshow(matrix, cmap='coolwarm')
